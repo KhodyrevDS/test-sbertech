@@ -2,24 +2,27 @@ package ru.kds.shoplist.contract;
 
 import java.io.Serializable;
 
-public class ShoplistCreateResponse implements Serializable {
+/**
+ * Item create response
+ */
+public class ItemCreateResponse implements Serializable {
 
-    private static final long serialVersionUID = 4815828056231472760L;
+    private static final long serialVersionUID = 5826156834511749402L;
 
     private Long id;
 
     /**
      * Class constructor
      */
-    public ShoplistCreateResponse() {
+    public ItemCreateResponse() {
     }
 
     /**
      * Class constructor
      *
-     * @param id the shoplist identifier
+     * @param id the item identifier
      */
-    public ShoplistCreateResponse(Long id) {
+    public ItemCreateResponse(Long id) {
         this.id = id;
     }
 

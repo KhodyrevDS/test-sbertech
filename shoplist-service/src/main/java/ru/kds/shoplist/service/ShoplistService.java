@@ -1,6 +1,8 @@
 package ru.kds.shoplist.service;
 
 import org.apache.commons.lang3.Validate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kds.shoplist.domain.Shoplist;
@@ -68,5 +70,15 @@ public class ShoplistService {
                 () -> new ObjectNotFoundException("Shoplist not exist"));
 
         shoplistRepository.delete(shoplist);
+    }
+
+    /**
+     * Find shoplists
+     *
+     * @param pageable the page info
+     * @return the list of shoplist
+     */
+    public Page<Shoplist> findShoplists(Pageable pageable) {
+        return shoplistRepository.findAll(pageable);
     }
 }
