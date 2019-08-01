@@ -3,7 +3,7 @@ package ru.kds.shoplist.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 public class Item extends AbstractPersistable<Long> {
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Shoplist shoplist;
 
     private String name;
@@ -21,7 +21,7 @@ public class Item extends AbstractPersistable<Long> {
 
     private boolean checked = false;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private ItemTemplate template;
 
     public Shoplist getShoplist() {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kds.shoplist.contract.PageResponse;
@@ -43,7 +44,7 @@ public class ShoplistController {
      * @param request the shoplist create request
      */
     @PostMapping
-    public ShoplistCreateResponse createShoplist(@Valid ShoplistCreateRequest request) {
+    public ShoplistCreateResponse createShoplist(@Valid @RequestBody ShoplistCreateRequest request) {
         Shoplist shoplist = shoplistService.createShoplist(request.getName());
         return new ShoplistCreateResponse(shoplist.getId());
     }
@@ -56,7 +57,7 @@ public class ShoplistController {
      * @throws ObjectNotFoundException when shoplist not exist
      */
     @PostMapping("{id}")
-    public void renameShoplist(@PathVariable Long id, @Valid ShoplistRenameRequest request)
+    public void renameShoplist(@PathVariable Long id, @Valid @RequestBody ShoplistRenameRequest request)
             throws ObjectNotFoundException {
         shoplistService.renameShoplist(id, request.getName());
     }
