@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kds.shoplist.domain.Item;
 import ru.kds.shoplist.domain.ItemRepository;
+import ru.kds.shoplist.domain.ItemTemplate;
 import ru.kds.shoplist.domain.Shoplist;
 import ru.kds.shoplist.domain.ShoplistRepository;
 
@@ -51,22 +52,30 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
+    @Transactional
+    public Item createItem(ItemTemplate itemTemplate) {
+        Validate.notNull(itemTemplate, "parameter itemTemplate is null");
+
+        Item item = new Item();
+        item.setName(itemTemplate.getName());
+        item.setPrice(itemTemplate.getPrice());
+        item.setTemplate(itemTemplate);
+
+        return itemRepository.save(item);
+    }
+
     /**
      * Check or uncheck the item
      *
-     * @param shoplistId the shoplist identifier
      * @param id the item identifier
      * @param checked the checked
      * @throws ObjectNotFoundException if shoplist or item not exist
      */
     @Transactional
-    public void checkItem(Long shoplistId, Long id, boolean checked) throws ObjectNotFoundException {
-        Validate.notNull(shoplistId, "parameter shoplistId is null");
+    public void checkItem(Long id, boolean checked) throws ObjectNotFoundException {
         Validate.notNull(id, "parameter id is null");
 
-        Shoplist shoplist = getShoplist(shoplistId);
-        Item item = itemRepository.findByIdAndShoplist_id(id, shoplist.getId()).orElseThrow(
-                () -> new ObjectNotFoundException("Item not exist"));
+        Item item = itemRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Item not exist"));
         item.setChecked(checked);
 
         itemRepository.save(item);
@@ -75,32 +84,38 @@ public class ItemService {
     /**
      * Delete item
      *
-     * @param shoplistId the shoplist identifier
      * @param id the item identifier
      * @throws ObjectNotFoundException if shoplist or item not exist
      */
     @Transactional
-    public void deleteItem(Long shoplistId, Long id) throws ObjectNotFoundException {
-        Validate.notNull(shoplistId, "parameter shoplistId is null");
+    public void deleteItem(Long id) throws ObjectNotFoundException {
         Validate.notNull(id, "parameter id is null");
 
-        Shoplist shoplist = getShoplist(shoplistId);
-        Item item = itemRepository.findByIdAndShoplist_id(id, shoplist.getId()).orElseThrow(
-                () -> new ObjectNotFoundException("Item not exist"));
+        Item item = itemRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Item not exist"));
 
         itemRepository.delete(item);
     }
 
     /**
-     * Find items
+     * Find shoplist items
      *
      * @param shoplistId the shoplist identifier
      * @param pageable the page info
      * @return the page of items
      */
-    public Page<Item> findItems(Long shoplistId, Pageable pageable) throws ObjectNotFoundException {
+    public Page<Item> findShoplistItems(Long shoplistId, Pageable pageable) throws ObjectNotFoundException {
         Shoplist shoplist = getShoplist(shoplistId);
         return itemRepository.findByShoplist_id(shoplist.getId(), pageable);
+    }
+
+    /**
+     * Find unchecked items
+     *
+     * @param pageable the page info
+     * @return the page of items
+     */
+    public Page<Item> findUncheckedItems(Pageable pageable) {
+        return itemRepository.findByCheckedFalse(pageable);
     }
 
     private Shoplist getShoplist(Long shoplistId) throws ObjectNotFoundException {

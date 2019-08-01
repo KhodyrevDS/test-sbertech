@@ -42,7 +42,7 @@ class ShoplistServiceSpec extends Specification {
         shoplistService.renameShoplist(shoplistId, newName)
 
         then:
-        1 * shoplistRepository.findById(shoplistId) >> new Optional<>(shoplist)
+        1 * shoplistRepository.findById(shoplistId) >> Optional.of(shoplist)
         1 * shoplistRepository.save(shoplist) >> { Shoplist shoplistToSave ->
             assert shoplistToSave.name == newName
         }
@@ -57,7 +57,7 @@ class ShoplistServiceSpec extends Specification {
         shoplistService.renameShoplist(shoplistId, newName)
 
         then:
-        1 * shoplistRepository.findById(shoplistId) >> new Optional()
+        1 * shoplistRepository.findById(shoplistId) >> Optional.empty()
 
         and:
         thrown ObjectNotFoundException
@@ -72,7 +72,7 @@ class ShoplistServiceSpec extends Specification {
         shoplistService.deleteShoplist(shoplistId)
 
         then:
-        1 * shoplistRepository.findById(shoplistId) >> new Optional(shoplist)
+        1 * shoplistRepository.findById(shoplistId) >> Optional.of(shoplist)
         1 * shoplistRepository.delete(shoplist)
     }
 
@@ -84,7 +84,7 @@ class ShoplistServiceSpec extends Specification {
         shoplistService.deleteShoplist(shoplistId)
 
         then:
-        1 * shoplistRepository.findById(shoplistId) >> new Optional()
+        1 * shoplistRepository.findById(shoplistId) >> Optional.empty()
 
         and:
         thrown ObjectNotFoundException

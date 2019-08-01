@@ -1,5 +1,9 @@
 package ru.kds.shoplist.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import ru.kds.shoplist.domain.ItemTemplate
 import ru.kds.shoplist.domain.ItemTemplateRepository
 import spock.lang.Specification
@@ -45,7 +49,7 @@ class ItemTemplateServiceSpec extends Specification {
         itemTemplateService.deleteItemTemplate(itemId)
 
         then:
-        1 * itemTemplateRepository.findById(itemId) >> new Optional<>(itemTemplate)
+        1 * itemTemplateRepository.findById(itemId) >> Optional.of(itemTemplate)
         1 * itemTemplateRepository.delete(itemTemplate)
     }
 
@@ -57,9 +61,27 @@ class ItemTemplateServiceSpec extends Specification {
         itemTemplateService.deleteItemTemplate(itemId)
 
         then:
-        1 * itemTemplateRepository.findById(itemId) >> new Optional<>()
+        1 * itemTemplateRepository.findById(itemId) >> Optional.empty()
 
         and:
         thrown ObjectNotFoundException
+    }
+
+    def 'should find template items'() {
+        given:
+        Pageable pageable = new PageRequest(0, 10)
+        Page<ItemTemplate> itemTemplates = new PageImpl<>([
+                new ItemTemplate([id: 2L, name: 'item 1']),
+                new ItemTemplate([id: 3L, name: 'item 2'])
+        ])
+
+        when:
+        Page<ItemTemplate> result = itemTemplateService.findItemTemplates(pageable)
+
+        then:
+        1 * itemTemplateRepository.findAll(pageable) >> itemTemplates
+
+        and:
+        result == itemTemplates
     }
 }

@@ -21,6 +21,9 @@ public class Item extends AbstractPersistable<Long> {
 
     private boolean checked = false;
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private ItemTemplate template;
+
     public Shoplist getShoplist() {
         return shoplist;
     }
@@ -51,5 +54,13 @@ public class Item extends AbstractPersistable<Long> {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public ItemTemplate getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(ItemTemplate template) {
+        this.template = template;
     }
 }

@@ -13,7 +13,7 @@ import ru.kds.shoplist.service.ObjectNotFoundException
 import spock.lang.Specification
 
 /**
- * Specification for {@ItemController}
+ * Specification for {@link ItemController}
  */
 class ItemControllerSpec extends Specification {
 
@@ -58,26 +58,24 @@ class ItemControllerSpec extends Specification {
 
     def 'should check item'() {
         given:
-        Long shoplistId = 1L
         Long itemId = 2L
 
         when:
-        itemController.checkItem(shoplistId, itemId)
+        itemController.checkItem(itemId)
 
         then:
-        1 * itemService.checkItem(shoplistId, itemId, true)
+        1 * itemService.checkItem(itemId, true)
     }
 
-    def 'should throw ObjectNotFoundException when check item for not existed shoplist or item'() {
+    def 'should throw ObjectNotFoundException when check not existed item'() {
         given:
-        Long shoplistId = 1L
         Long itemId = 2L
 
         when:
-        itemController.checkItem(shoplistId, itemId)
+        itemController.checkItem(itemId)
 
         then:
-        1 * itemService.checkItem(shoplistId, itemId, true) >> {
+        1 * itemService.checkItem(itemId, true) >> {
             throw new ObjectNotFoundException('Shoplist not exist')
         }
 
@@ -87,26 +85,24 @@ class ItemControllerSpec extends Specification {
 
     def 'should uncheck item'() {
         given:
-        Long shoplistId = 1L
         Long itemId = 2L
 
         when:
-        itemController.uncheckItem(shoplistId, itemId)
+        itemController.uncheckItem(itemId)
 
         then:
-        1 * itemService.checkItem(shoplistId, itemId, false)
+        1 * itemService.checkItem(itemId, false)
     }
 
-    def 'should throw ObjectNotFoundException when uncheck item for not existed shoplist or item'() {
+    def 'should throw ObjectNotFoundException when uncheck not existed item'() {
         given:
-        Long shoplistId = 1L
         Long itemId = 2L
 
         when:
-        itemController.uncheckItem(shoplistId, itemId)
+        itemController.uncheckItem(itemId)
 
         then:
-        1 * itemService.checkItem(shoplistId, itemId, false) >> {
+        1 * itemService.checkItem(itemId, false) >> {
             throw new ObjectNotFoundException('Shoplist not exist')
         }
 
@@ -116,26 +112,24 @@ class ItemControllerSpec extends Specification {
 
     def 'should delete item'() {
         given:
-        Long shoplistId = 1L
         Long itemId = 2L
 
         when:
-        itemController.deleteItem(shoplistId, itemId)
+        itemController.deleteItem(itemId)
 
         then:
-        1 * itemService.deleteItem(shoplistId, itemId)
+        1 * itemService.deleteItem(itemId)
     }
 
-    def 'should throw ObjectNotFoundException when delete item for not existed shoplist or item'() {
+    def 'should throw ObjectNotFoundException when delete not existed item'() {
         given:
-        Long shoplistId = 1L
         Long itemId = 2L
 
         when:
-        itemController.deleteItem(shoplistId, itemId)
+        itemController.deleteItem(itemId)
 
         then:
-        1 * itemService.deleteItem(shoplistId, itemId) >> {
+        1 * itemService.deleteItem(itemId) >> {
             throw new ObjectNotFoundException('Shoplist not exist')
         }
 
@@ -143,7 +137,7 @@ class ItemControllerSpec extends Specification {
         thrown ObjectNotFoundException
     }
 
-    def 'should find items'() {
+    def 'should find shoplist items'() {
         given:
         Long shoplistId = 1L
         Long item1Id = 2L
@@ -156,7 +150,32 @@ class ItemControllerSpec extends Specification {
         PageResponse<ItemRest> response = itemController.findItems(shoplistId, pageable)
 
         then:
-        1 * itemService.findItems(shoplistId, pageable) >> new PageImpl<>([
+        1 * itemService.findShoplistItems(shoplistId, pageable) >> new PageImpl<>([
+                new Item([id: item1Id, name: 'item1', price: 22L]),
+                new Item([id: item2Id, name: 'item2']),
+                new Item([id: item3Id, name: 'item3', price: 0L])
+        ])
+
+        and:
+        response.content.size() == 3
+        response.content.get(0).id == 2L
+        response.content.get(1).id == 3L
+        response.content.get(2).id == 4L
+    }
+
+    def 'should find unchecked items'() {
+        given:
+        Long item1Id = 2L
+        Long item2Id = 3L
+        Long item3Id = 4L
+
+        Pageable pageable = new PageRequest(0, 10)
+
+        when:
+        PageResponse<ItemRest> response = itemController.findUncheckedItems(pageable)
+
+        then:
+        1 * itemService.findUncheckedItems(pageable) >> new PageImpl<>([
                 new Item([id: item1Id, name: 'item1', price: 22L]),
                 new Item([id: item2Id, name: 'item2']),
                 new Item([id: item3Id, name: 'item3', price: 0L])

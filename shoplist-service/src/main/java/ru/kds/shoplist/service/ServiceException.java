@@ -9,35 +9,10 @@ public class ServiceException extends Exception {
 
     /**
      * Class constructor
-     */
-    public ServiceException() {
-    }
-
-    /**
-     * Class constructor
      *
      * @param message the error message
      */
     public ServiceException(String message) {
         super(message);
-    }
-
-    /**
-     * Class constructor
-     *
-     * @param message the error message
-     * @param cause the error cause
-     */
-    public ServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * Class constructor
-     *
-     * @param cause the error cause
-     */
-    public ServiceException(Throwable cause) {
-        super(cause);
     }
 }
